@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Badge — Free soulbound badge for Agent ID holders</title>
+<meta name="description" content="Agent Badge is a free soulbound NFT for Agent ID holders on BNB Smart Chain. Mint once, check in daily, build your streak.">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">&#9670;</div>
+      <div>
+        <h1>Agent Badge</h1>
+        <p class="tagline">A free soulbound badge for Agent ID holders. Mint once, check in daily, build your streak.</p>
+      </div>
+    </div>
+    <div class="net-pill" id="netPill"><span class="dot"></span><span id="netLabel">BNB Smart Chain</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Connect -->
+  <section class="card" id="connectCard">
+    <h2>Connect your wallet</h2>
+    <p class="muted">Connect with an injected wallet (Binance Wallet or MetaMask). Nothing is signed until you approve it in your own wallet — no automatic signing, no extra transfers.</p>
+    <div class="btn-row">
+      <button class="btn" id="connectBtn" type="button">Connect Wallet</button>
+      <button class="btn secondary hidden" id="switchBtn" type="button">Switch to BNB Smart Chain</button>
+    </div>
+    <div id="noProviderBox" class="tx-box hidden">
+      No injected wallet found in this browser. Install
+      <a href="https://www.binance.com/en/web3wallet" target="_blank" rel="noopener">Binance Wallet</a>
+      (or MetaMask), then reload this page and connect.
+    </div>
+    <div id="connectMsg" class="tx-box hidden"></div>
+  </section>
+
+  <!-- Status -->
+  <section class="card" id="statusCard">
+    <h2>Your status</h2>
+    <div class="status-grid">
+      <div class="status-item">
+        <div class="label">Wallet</div>
+        <div class="value" id="stAddress">Not connected</div>
+        <div class="sub" id="stAddressSub"></div>
+      </div>
+      <div class="status-item">
+        <div class="label">Agent ID held</div>
+        <div class="value" id="stAgentId">&mdash;</div>
+        <div class="sub">Checked on-chain against the Agent ID registry</div>
+      </div>
+      <div class="status-item">
+        <div class="label">Badge owned</div>
+        <div class="value" id="stBadge">&mdash;</div>
+        <div class="sub" id="stBadgeSub"></div>
+      </div>
+      <div class="status-item">
+        <div class="label">Check-in streak</div>
+        <div class="value" id="stStreak">&mdash;</div>
+        <div class="sub" id="stStreakSub">Consecutive UTC days</div>
+      </div>
+      <div class="status-item">
+        <div class="label">Tier</div>
+        <div class="value" id="stTier">&mdash;</div>
+        <div class="sub" id="stTierSub"></div>
+      </div>
+      <div class="status-item">
+        <div class="label">Total badges minted</div>
+        <div class="value" id="stTotal">&mdash;</div>
+        <div class="sub">Across all Agent ID holders</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Badge display -->
+  <section class="card" id="badgeCard">
+    <h2>Your badge</h2>
+    <div id="badgeEmpty">
+      <div class="badge-display">
+        <div class="placeholder-box">No badge yet.<br>Mint your free badge below.</div>
+        <div class="badge-meta">
+          <p class="muted">Once you mint, your badge artwork and attributes will appear here, loaded from the badge&rsquo;s on-chain token URI.</p>
+        </div>
+      </div>
+    </div>
+    <div id="badgeFilled" class="hidden">
+      <div class="badge-display">
+        <img id="badgeImg" class="badge-img" alt="Agent Badge artwork">
+        <div class="badge-meta">
+          <h3 id="badgeName">Agent Badge</h3>
+          <p class="muted small" id="badgeDesc"></p>
+          <div class="attrs" id="badgeAttrs"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Actions -->
+  <section class="card" id="actionsCard">
+    <h2>Actions</h2>
+    <p class="muted">Both actions are free — gas only. Each transaction is confirmed by you in your wallet.</p>
+    <div class="btn-row">
+      <button class="btn" id="mintBtn" type="button" disabled>Mint free badge</button>
+      <button class="btn" id="checkInBtn" type="button" disabled>Check in today</button>
+    </div>
+    <p class="small muted" id="mintHint"></p>
+    <p class="small muted" id="checkInHint"></p>
+    <div id="txBox" class="tx-box hidden"></div>
+  </section>
+
+  <!-- How it works -->
+  <section class="card" id="howCard">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>
+        <strong>Connect your wallet</strong>
+        <span class="muted">Use Binance Wallet or MetaMask on BNB Smart Chain. We only read your address — nothing is signed at this step.</span>
+      </li>
+      <li>
+        <strong>Mint your free badge</strong>
+        <span class="muted">If your wallet holds an Agent ID, you can mint one soulbound Agent Badge for free (gas only). One badge per Agent ID holder.</span>
+      </li>
+      <li>
+        <strong>Check in every day</strong>
+        <span class="muted">Come back once per UTC day and check in to grow your streak and climb tiers: New Agent &rarr; Bronze &rarr; Silver &rarr; Gold.</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Rules -->
+  <section class="card" id="rulesCard">
+    <h2>Rules</h2>
+    <ul class="rules">
+      <li>One badge per Agent ID holder. You must hold an Agent ID to mint.</li>
+      <li>One check-in per UTC day. Checking in twice on the same day does nothing extra.</li>
+      <li>Your streak resets if you miss a UTC day.</li>
+      <li>The badge is soulbound — it cannot be transferred to another wallet.</li>
+      <li>Minting and check-ins cost gas only. There is no fee, no token sale, and no payment to anyone.</li>
+    </ul>
+  </section>
+
+  <!-- Disclaimer -->
+  <section class="card disclaimer" id="disclaimerCard">
+    <h2>Please note</h2>
+    <p>Agent Badge is a free collectible badge for Agent ID holders. It has <strong>no financial value</strong>, is not an investment, and <strong>no returns of any kind are promised</strong>. Minting and check-ins only cost network gas. Never share your seed phrase or private key with anyone — this site will never ask for them.</p>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Network: <strong>BNB Smart Chain</strong> (chain ID 56)</p>
+    <p id="contractLine">Agent Badge contract: <span class="muted">not deployed yet</span></p>
+    <p>Agent ID registry: <a id="registryLink" href="https://bscscan.com/address/0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F" target="_blank" rel="noopener"><span class="mono">0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F</span></a></p>
+    <p class="small">Built for the Agent ID Hackathon. This is a static page — no backend, no analytics, no data leaves your browser except the public blockchain calls your wallet makes.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
